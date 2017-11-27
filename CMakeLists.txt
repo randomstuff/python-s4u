@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8.12)
+project(python-s4u)
+find_package(pybind11 REQUIRED)
+pybind11_add_module(s4u src/s4u.cpp)
+target_link_libraries(s4u simgrid)
