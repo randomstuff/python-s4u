@@ -50,6 +50,7 @@ PYBIND11_PLUGIN(s4u) {
   });
 
   m.def("execute", py::overload_cast<double>(&simgrid::s4u::this_actor::execute));
+  m.def("yield_", &simgrid::s4u::this_actor::yield);
 
   py::class_<Engine>(m, "Engine")
     .def(py::init([](std::vector<std::string> args) -> simgrid::s4u::Engine* {
@@ -64,7 +65,14 @@ PYBIND11_PLUGIN(s4u) {
     }))
     .def("load_platform", &Engine::loadPlatform)
     .def("load_deployment", &Engine::loadDeployment)
-    .def("run", &Engine::run);
+    .def("run", &Engine::run)
+    .def("register_function", [](Engine*, const char* name, std::function<void(std::vector<std::string>)> f) {
+      simgrid::simix::registerFunction(name, [f] (std::vector<std::string> args) -> simgrid::simix::ActorCode {
+        return [args, f]() {
+          f(args);
+        };
+      });
+    });
 
   // Currently, Host lead to segfault:
   py::class_<simgrid::s4u::Host, std::unique_ptr<Host, py::nodelete>>(m, "Host")
