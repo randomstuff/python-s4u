@@ -39,9 +39,9 @@ namespace {
 
 }
 
-PYBIND11_PLUGIN(s4u) {
+PYBIND11_MODULE(s4u, m) {
 
-  py::module m("s4u", "Simgrid userspace API");
+  m.doc() = "Simgrid userspace API";
 
   m.attr("simgrid_version") = simgrid_version;
 
@@ -92,5 +92,4 @@ PYBIND11_PLUGIN(s4u) {
     };
   });
 
-  return m.ptr();
 }
